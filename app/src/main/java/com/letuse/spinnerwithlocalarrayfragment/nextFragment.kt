@@ -22,7 +22,6 @@ class nextFragment : Fragment() {
 
     lateinit var vm: viewmodel
     private var category_ID: Int = 0
-    lateinit var category: Category
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,24 +65,39 @@ class nextFragment : Fragment() {
         }
 
         //Spinner
-//        val data = arrayOf("No Category", "Create New Category",category.category_name) => lateinit property category has not been initialized
-        val data = arrayOf("No Category", "Create New Category")
-        var adapter = context?.let { ArrayAdapter(it, R.layout.list_item, data) }
-        mySpinner.adapter = adapter
+        vm.allItem.observe(
+            viewLifecycleOwner, Observer {
 
-        mySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) {
+                var dataList = arrayOfNulls<String>(it.size + 2)
+                dataList[0] = "No Category"
+                dataList[1] = "Create New Category"
+                var count = 2
 
-            }
-
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                if (position.equals(0)) {
-                } else if (position.equals(1)) {
-                    findNavController().navigate(nextFragmentDirections.actionNextFragmentToCategoryFragment())
-                    mySpinner.setSelection(0);
+                for (data in it) {
+                    dataList[count] = data.category_name.toString()
+                    count++
                 }
-            }
-        }
 
+                var adapter = context?.let { ArrayAdapter(it, R.layout.list_item, dataList) }
+                mySpinner.adapter = adapter
+
+                mySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+
+                    }
+
+                    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                        if (position.equals(0)) {
+                            txt.text = p0?.getItemAtPosition(0).toString()
+                        } else if (position.equals(1)) {
+                            findNavController().navigate(nextFragmentDirections.actionNextFragmentToCategoryFragment())
+                            mySpinner.setSelection(0);
+                        } else{
+                            txt.text = p0?.getItemAtPosition(position).toString()
+                        }
+                    }
+                }
+            })
     }
 }
+
