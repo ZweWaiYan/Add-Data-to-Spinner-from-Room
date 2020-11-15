@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "Spinner with Local Array Fragment"
